@@ -8,7 +8,7 @@ stages:
   jobs:
   - job: InstallMySQL_Apache
     pool:
-      vmimage: 'RHELRaw8LVMGen2'
+      name: linux-agent
     steps:
     - script: |
         sudo yum update -y
