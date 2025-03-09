@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        LINUX_IP = "52.166.178.0"  // ضع هنا IP سيرفر RHEL
+        LINUX_IP = "13.80.48.46"  // ضع هنا IP سيرفر RHEL
         WINDOWS_IP = "192.168.1.101" // ضع هنا IP سيرفر Windows
     }
     properties([
