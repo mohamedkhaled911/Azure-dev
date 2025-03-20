@@ -17,7 +17,7 @@ stages:
         sudo systemctl enable httpd
         sudo firewall-cmd --add-service=http --permanent
         sudo firewall-cmd --reload
-        mysql -u root -e "source database/init.sql"
+        mysql -u root -e "source src/database/init.sql"
         cp -r src/* /var/www/html/
 
 - stage: Setup_Windows
