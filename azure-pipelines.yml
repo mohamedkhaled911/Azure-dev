@@ -10,6 +10,7 @@ stages:
     pool:
       name: linux-agent
     steps:
+    - checkout: self  # تأكد من تنزيل الكود من GitHub
     - script: |
         sudo yum update -y
         sudo yum install -y httpd mysql-server
@@ -17,8 +18,12 @@ stages:
         sudo systemctl enable httpd
         sudo firewall-cmd --add-service=http --permanent
         sudo firewall-cmd --reload
-        mysql -u root -e "source src/database/init.sql"
-        cp -r src/* /var/www/html/
+    - script: |
+        sudo mysql -u root -e "source $(Build.SourcesDirectory)/src/database/init.sql"
+      displayName: 'Run MySQL Script'
+    - script: |
+        sudo cp -r $(Build.SourcesDirectory)/src/* /var/www/html/
+      displayName: 'Copy Web Files to Apache Root'
 
 - stage: Setup_Windows
   jobs:
@@ -26,8 +31,14 @@ stages:
     pool:
       name: windows-agent
     steps:
+    - checkout: self  # تأكد من تنزيل الكود من GitHub
     - powershell: |
         Install-WindowsFeature -Name Web-Server -IncludeManagementTools
         net start W3SVC
-        mysql -u root -e "source src\\database\\init.sql"
-        Copy-Item -Path src/* -Destination C:\inetpub\wwwroot -Recurse -Force
+      displayName: 'Install IIS and Start Service'
+    - powershell: |
+        mysql -u root -e "source $(Build.SourcesDirectory)\src\database\init.sql"
+      displayName: 'Run MySQL Script'
+    - powershell: |
+        Copy-Item -Path "$(Build.SourcesDirectory)\src\*" -Destination "C:\inetpub\wwwroot" -Recurse -Force
+      displayName: 'Copy Web Files to IIS Root'
